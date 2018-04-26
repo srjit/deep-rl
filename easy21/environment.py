@@ -1,32 +1,23 @@
-
-import random
+import players
 
 __author__ = "Sreejith Sreekumar"
-__email__ = "sreekumar.s@husky.neu.edu"
+__email__ = "sreejith.sreekumar@fmr.com"
 __version__ = "0.0.1"
 
 
-class Card:
+class Environment():
 
     def __init__(self):
-        self.color = self._get_color()
-        self.number = self._get_number()
-    
-    
-    def _get_color(self):
-        random_number = random.random()
-        if random_number <= 0.3:
-            return "black"
+        self._agent = players.Agent()
+        self._dealer = players.Dealer()
+
+    def check_if_busted(self, player_sum):
+        return player_sum > 21 or player_sum < 1
+
+    def reward_if_busted(self, s):
+        if s._agent_sum > s._dealer_sum:
+            return 1
+        elif s._agent_sum == s.dealer_sum:
+            return 0
         else:
-            return "red"
-
-    def _get_number(self):
-        return random.random(1, 10)
-
-
-    
-class Deck:
-    def _get_card():
-        return Card()
-    
-        
+            return -1
