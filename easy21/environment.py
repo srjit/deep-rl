@@ -1,23 +1,32 @@
-import players
+from elements import Dealer
+from elements import Deck
 
 __author__ = "Sreejith Sreekumar"
 __email__ = "sreejith.sreekumar@fmr.com"
 __version__ = "0.0.1"
 
+# things to program
+# Strategy of the dealer
+# Elements Required - 1) Sum of Cards currently holding
+#                     2) A deck to pick a card from
+#
 
-class Environment():
+
+class GameState:
+
+    def __init__(self, dealer_sum=0, player_sum=0, is_terminal=False):
+        self._dealer_sum = dealer_sum
+        self._player_sum = player_sum
+        self._is_terminal = is_terminal
+
+
+class Environment:
 
     def __init__(self):
-        self._agent = players.Agent()
-        self._dealer = players.Dealer()
+        self._dealer = Dealer()
+        self._deck = Deck()
 
-    def check_if_busted(self, player_sum):
-        return player_sum > 21 or player_sum < 1
-
-    def reward_if_busted(self, s):
-        if s._agent_sum > s._dealer_sum:
-            return 1
-        elif s._agent_sum == s.dealer_sum:
-            return 0
-        else:
-            return -1
+    def step(self, game_state, player_action):
+        '''
+        Given a state and action return next game state
+        '''
