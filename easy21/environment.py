@@ -10,6 +10,13 @@ __version__ = "0.0.1"
 #                     2) A deck to pick a card from
 #
 
+class GameState:
+
+    def __init__(self, player_sum, dealer_sum, is_terminal):
+        self._player_sum = player_sum
+        self._dealer_sum = dealer_sum
+        self._is_terminal = is_terminal
+
 
 class Environment:
 
@@ -18,8 +25,27 @@ class Environment:
         self._dealer = Dealer()
         self._player_sum = 0
         self._is_terminal = False
+        self.game_state = GameState(self._player_sum,
+                                    self._dealer._total,
+                                    self._is_terminal)
+        self.collect_initial_cards()
+        
+        
 
+    def collect_initial_cards(self):
+        card_for_dealer = self._deck.pick_starting_black_card()
+        card_for_player = self._deck.pick_starting_black_card()
 
+        self._dealer._total += card_for_dealer._value
+        self._player_sum += card_for_player._value
+        
+
+        
+    
+    def game_state(self):
+        return self.game_state
+
+    
     def check_bust(self, is_agent=False):
         if is_agent:
             return self._player_sum > 21 or self._player_sum <= 1
@@ -62,7 +88,7 @@ class Environment:
             return -1
         
         
-    def step(self):
+    def step(self, player_action):
 
         if player_action == Action.STICK:
             # Player stopped playing. Now the dealer makes moves
@@ -70,7 +96,7 @@ class Environment:
             if self._is_terminal:
                 reward = 1
             else:
-                reward = self.check_higher_total_and_give_reward()
+                reward = self._check_higher_total_and_give_reward()
                 self._is_terminal = True
 
         # player has to play now
@@ -89,4 +115,4 @@ class Environment:
         # next_state = self._deck.pick_card()
             
 
-Environment().step()
+env = Environment().step(Action.STICK)

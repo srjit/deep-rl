@@ -20,8 +20,13 @@ class Color(Enum):
 
 class Card:
 
-    def __init__(self):
-        self._color = self._get_color()
+
+    def __init__(self, color=None):
+        if color is not None:
+            self._color = color
+        else:
+            self._color = self._get_color()
+            
         self._value = self._get_value()
 
     def _get_color(self):
@@ -38,7 +43,10 @@ class Card:
 class Deck:
 
     def pick_card(self):
-        return Card()
+        return Card(color=None)
+
+    def pick_starting_black_card(self):
+        return Card(color=Color.BLACK)
 
 
 class Dealer:
