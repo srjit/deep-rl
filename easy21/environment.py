@@ -24,10 +24,9 @@ class Environment:
         self._deck = Deck()
         self._dealer = Dealer()
         self._player_sum = 0
-        self._is_terminal = False
-        self.game_state = GameState(self._player_sum,
+        self._game_state = GameState(self._player_sum,
                                     self._dealer._total,
-                                    self._is_terminal)
+                                    self._is_terminal=False)
         self.collect_initial_cards()
         
         
@@ -71,12 +70,12 @@ class Environment:
         action = None
         dealer_sum = 0
         
-        while not self._is_terminal and action != Action.STICK:
+        while not self._game_state._is_terminal and action != Action.STICK:
             action = self._dealer._policy()
             if action == Action.HIT:
                 card = self._deck.pick_card()
                 self._add_card_value(card)
-            self._is_terminal = self.check_bust()
+            self._game_state._is_terminal = self.check_bust()
 
 
     def _check_higher_total_and_give_reward(self):
@@ -93,18 +92,18 @@ class Environment:
         if player_action == Action.STICK:
             # Player stopped playing. Now the dealer makes moves
             next_state = self._make_dealer_moves()
-            if self._is_terminal:
+            if self._game_state._is_terminal:
                 reward = 1
             else:
                 reward = self._check_higher_total_and_give_reward()
-                self._is_terminal = True
+                self._game_state._is_terminal = True
 
         # player has to play now
         else:
             card = self._deck.pick_card()
             self._add_card_value(card, is_agent=True)
-            self._is_terminal = self.check_bust(is_agent=True)
-            if self._is_terminal:
+            self._game_state._is_terminal = self.check_bust(is_agent=True)
+            if self._game_state._is_terminal:
                 reward = -1
 
         return reward
@@ -114,5 +113,5 @@ class Environment:
             # Player plays
         # next_state = self._deck.pick_card()
             
-
-env = Environment().step(Action.STICK)
+# Testing the environment
+# env = Environment().step(Action.STICK)
