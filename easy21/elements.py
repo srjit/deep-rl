@@ -37,20 +37,18 @@ class Card:
 
 class Deck:
 
-    def __init__(self):
-        pass
+    def pick_card(self):
+        return Card()
 
 
 class Dealer:
 
     def __init__(self):
-        pass
+        self._total = 0
 
-    def play(self, game_state):
-        if game_state._dealer_sum >= 17:
+    def _policy(self):
+        if self._total >= 17:
             return Action.STICK
         else:
             return Action.HIT
 
-    def make_move(self, game_state):
-        
