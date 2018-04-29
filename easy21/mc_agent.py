@@ -22,7 +22,13 @@ class MCAgent(Agent):
         return self.V
 
     def policy(self):
-        pass
+        if s.agent_sum >= 17:
+            action = Action.STICK
+        else:
+            action = Action.HIT
+        
+        self.N[s.dealer_sum][s.agent_sum][action.value] += 1
+        return action        
 
     def train(self, steps):
 
@@ -37,12 +43,7 @@ class MCAgent(Agent):
                 reward = self.env.step(action)
                 episode.append((env._game_state, action, reward))
 
-                
+            print("Episode " + str(e) +  " complete")
+            self.predict(episode)
 
-                
-
-                
-   
-            
-            
-        
+        return self.get_value_function()
