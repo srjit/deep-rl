@@ -1,5 +1,6 @@
 from elements import Action
 import random
+import numpy as np
 
 __author__ = "Sreejith Sreekumar"
 __email__ = "sreekumar.s@husky.neu.edu"
@@ -21,11 +22,15 @@ class Agent():
         self.wins = 0.0
         self.iterations = 0.0        
 
-
         
     def policy(self):
         return Action.HIT
 
+
+    def get_clear_tensor(self):
+        return np.zeros((self.env.dealer_max_value + 1,
+                         self.env.agent_max_value + 1, 
+                         self.env.actions_count))    
 
     def choose_random_action(self):
         prob = random.random()

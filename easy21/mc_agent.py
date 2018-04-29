@@ -1,4 +1,7 @@
 from agent import Agent
+from environment import Environment
+import numpy as np
+from elements import Action
 
 __author__ = "Sreejith Sreekumar"
 __email__ = "sreekumar.s@husky.neu.edu"
@@ -15,21 +18,33 @@ class MCAgent(Agent):
 
     def __init__(self, environment, No=100, discount_factor=100):
         Agent.__init__(self, environment, No, discount_factor)
-        self.G_s = np.zeros([self.env.dealer_max_value + 1, self.env.agent_max_value + 1])
+
+        self.N = self.get_clear_tensor()
+
+        self.G_s = np.zeros([self.env.dealer_max_value + 1,
+                             self.env.agent_max_value + 1])
 
 
     def get_value_function(self):
         return self.V
 
+
+    def predict(self, episode):
+        "code for MC"
+        pass
+    
     def policy(self):
-        if s.agent_sum >= 17:
+        if self.env._game_state._player_sum >= 17:
             action = Action.STICK
+            index = 0
         else:
             action = Action.HIT
-        
-        self.N[s.dealer_sum][s.agent_sum][action.value] += 1
+            index = 1
+
+        self.N[self.env._game_state._dealer_sum][self.env._game_state._player_sum][index] += 1
         return action        
 
+    
     def train(self, steps):
 
         
@@ -47,3 +62,8 @@ class MCAgent(Agent):
             self.predict(episode)
 
         return self.get_value_function()
+
+
+env = Environment()
+agent = MCAgent(env)
+agent.train(10000)

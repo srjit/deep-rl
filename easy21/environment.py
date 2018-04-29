@@ -17,17 +17,24 @@ class GameState:
         self._dealer_sum = dealer_sum
         self._is_terminal = is_terminal
 
+        
 
 class Environment:
 
+    
     def __init__(self):
         self._deck = Deck()
         self._dealer = Dealer()
-        self._player_sum = 0
-        self._game_state = GameState(self._player_sum,
+        initial_player_sum = 0
+        self._game_state = GameState(initial_player_sum,
                                     self._dealer._total,
-                                    self._is_terminal=False)
+                                    False)
+        
         self.collect_initial_cards()
+
+        self.agent_max_value = 21
+        self.dealer_max_value = 10
+        self.actions_count = 2
         
         
 
@@ -36,7 +43,7 @@ class Environment:
         card_for_player = self._deck.pick_starting_black_card()
 
         self._dealer._total += card_for_dealer._value
-        self._player_sum += card_for_player._value
+        self._game_state._player_sum += card_for_player._value
         
 
         
@@ -47,7 +54,7 @@ class Environment:
     
     def check_bust(self, is_agent=False):
         if is_agent:
-            return self._player_sum > 21 or self._player_sum <= 1
+            return self._game_state._player_sum > 21 or self._game_state._player_sum <= 1
         
         return self._dealer._total > 21 or self._dealer._total <= 1
         
@@ -60,11 +67,11 @@ class Environment:
             value = -1 * card._value
 
         if is_agent:
-            self._player_sum += value
+            self._game_state._player_sum += value
         else:
             self._dealer._total += value
         
-        
+            
     def _make_dealer_moves(self):
         
         action = None
@@ -79,15 +86,17 @@ class Environment:
 
 
     def _check_higher_total_and_give_reward(self):
-        if self._player_sum > self._dealer._total:
+        if self._game_state._player_sum > self._dealer._total:
             return 1
-        elif self._player_sum == self._dealer._total:
+        elif self._game_state._player_sum == self._dealer._total:
             return 0
         else:
             return -1
         
         
     def step(self, player_action):
+
+        reward = 0
 
         if player_action == Action.STICK:
             # Player stopped playing. Now the dealer makes moves
@@ -109,9 +118,6 @@ class Environment:
         return reward
 
                 
-        # else:
-            # Player plays
-        # next_state = self._deck.pick_card()
             
 # Testing the environment
 # env = Environment().step(Action.STICK)
