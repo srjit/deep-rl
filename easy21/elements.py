@@ -20,7 +20,6 @@ class Color(Enum):
 
 class Card:
 
-
     def __init__(self, color=None):
         if color is not None:
             self._color = color
@@ -38,6 +37,10 @@ class Card:
 
     def _get_value(self):
         return random.randint(1, 10)
+
+    def __str__(self):
+        return "{ Color: " + str(self._color) + ", " +\
+            "Value: " + str(self._value) + "}"
 
 
 class Deck:
@@ -59,4 +62,3 @@ class Dealer:
             return Action.STICK
         else:
             return Action.HIT
-
