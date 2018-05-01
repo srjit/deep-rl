@@ -31,6 +31,13 @@ class Environment:
         '''
         Do not touch the deck and dealer directly
         '''
+        self.reset_game()
+
+        self.agent_max_value = 21
+        self.dealer_max_value = 10
+        self.actions_count = 2
+
+    def reset_game(self):
         self._deck = Deck()
         self._dealer = Dealer()
         
@@ -38,18 +45,13 @@ class Environment:
         self._game_state = GameState(initial_player_sum,
                                      self._dealer,
                                      False)
-        self.collect_initial_cards()
-
-        self.agent_max_value = 21
-        self.dealer_max_value = 10
-        self.actions_count = 2
-
-    def collect_initial_cards(self):
+        
         card_for_dealer = self._deck.pick_starting_black_card()
         card_for_player = self._deck.pick_starting_black_card()
 
         self._game_state._dealer._total = card_for_dealer._value
         self._game_state._player_sum = card_for_player._value
+
 
     def check_bust(self, is_agent=False):
         if is_agent:
@@ -117,7 +119,7 @@ class Environment:
 # (Yes, I know...But I don't have time for a proper test suite)
 
 # Creating the environment
-# env = Environment()
+env = Environment()
 
 # Checking the dealer moves
 # env._make_dealer_moves()
@@ -127,4 +129,4 @@ class Environment:
 # if the dealer stops between 17 and 21, he wins since the
 # player is not playing and only maintains his initial sum of 0
 
-# reward = env.step(Action.STICK)
+reward = env.step(Action.STICK)

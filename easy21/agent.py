@@ -32,6 +32,7 @@ class Agent():
                          self.env.agent_max_value + 1, 
                          self.env.actions_count))    
 
+
     def choose_random_action(self):
         prob = random.random()
         if prob < 0.5:
@@ -41,7 +42,6 @@ class Agent():
 
     def choose_best_action(self):
         return Action.HIT
-
 
 
     def get_max_action(self):
@@ -57,8 +57,3 @@ class Agent():
                 s = State(i, j)
                 self.V[i][j] = self.get_max_action(s)
         return self.V
-    
-
-    
-
-        

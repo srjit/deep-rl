@@ -41,18 +41,16 @@ class MCAgent(Agent):
             action = Action.HIT
             index = 1
 
-        self.N[self.env._game_state._dealer_sum][self.env._game_state._player_sum][index] += 1
+        self.N[self.env._game_state._dealer._total][self.env._game_state._player_sum][index] += 1
         return action        
 
     
     def train(self, steps):
-
-        
         for e in range(steps):
+            env.reset_game()
             episode = []
 
             while not env._game_state._is_terminal:
-
                 current_game_state = self.env._game_state
                 action = self.policy()
                 reward = self.env.step(action)
@@ -66,4 +64,4 @@ class MCAgent(Agent):
 
 env = Environment()
 agent = MCAgent(env)
-agent.train(10000)
+value_function = agent.train(10000)
