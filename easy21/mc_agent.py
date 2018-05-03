@@ -24,15 +24,15 @@ class MCAgent(Agent):
         self.G_s = np.zeros([self.env.dealer_max_value + 1,
                              self.env.agent_max_value + 1])
 
-
     def get_value_function(self):
         return self.V
 
-
     def predict(self, episode):
-        "code for MC"
+        '''
+        ToDo
+        '''
         pass
-    
+
     def policy(self):
         if self.env._game_state._player_sum >= 17:
             action = Action.STICK
@@ -42,25 +42,25 @@ class MCAgent(Agent):
             index = 1
 
         self.N[self.env._game_state._dealer._total][self.env._game_state._player_sum][index] += 1
-        return action        
+        return action
 
-    
     def train(self, steps):
-        for e in range(steps):
-            env.reset_game()
+        for episode_id, e in enumerate(range(steps)):
+            print("Beginning episode ", episode_id)
             episode = []
 
             while not env._game_state._is_terminal:
+                import ipdb
+                ipdb.set_trace()
                 current_game_state = self.env._game_state
                 action = self.policy()
                 reward = self.env.step(action)
                 episode.append((env._game_state, action, reward))
 
-            print("Episode " + str(e) +  " complete")
+            print("Episode " + str(e) + " complete")
             self.predict(episode)
 
         return self.get_value_function()
-
 
 env = Environment()
 agent = MCAgent(env)
