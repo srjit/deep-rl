@@ -8,8 +8,8 @@ __version__ = "0.0.1"
 
 class Action(Enum):
 
-    STICK = "_stick"
-    HIT = "_hit"
+    STICK = 0
+    HIT = 1
 
 
 class Color(Enum):

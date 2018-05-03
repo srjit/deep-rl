@@ -9,15 +9,15 @@ __version__ = "0.0.1"
 
 class Agent:
 
-    def __init__(self, environment, No=100, discount_factor=1):
+    def __init__(self, environment, gamma, No=100):
 
         self.env = environment
 
         # let's figure this out later
         self.No = No
-        self.discount_factor = discount_factor
+        self._gamma = gamma
 
-        # the state value function -  how good is it to be in a state
+        # our state value function -  how good is it to be the possible states
         self.V = np.zeros([self.env.dealer_max_value + 1,
                            self.env.agent_max_value + 1])
 
