@@ -1,28 +1,64 @@
-
 import random
+from enum import Enum
 
 __author__ = "Sreejith Sreekumar"
-__email__ = "sreekumar.s@husky.neu.edu"
+__email__ = "sreejith.sreekumar@fmr.com"
 __version__ = "0.0.1"
+
+
+class Action(Enum):
+
+    STICK = 0
+    HIT = 1
+
+
+class Color(Enum):
+
+    RED = "_red"
+    BLACK = "_black"
 
 
 class Card:
 
-    def __init__(self):
-        self.color = self._get_color()
-        self.number = self._get_number()
+    def __init__(self, color=None):
+        if color is not None:
+            self._color = color
+        else:
+            self._color = self._get_color()
+            
+        self._value = self._get_value()
 
     def _get_color(self):
-        random_number = random.random()
-        if random_number <= 0.3:
-            return "black"
+        r = random.random()
+        if r <= 0.3:
+            return Color.RED
         else:
-            return "red"
+            return Color.BLACK
 
-    def _get_number(self):
-        return random.random(1, 10)
+    def _get_value(self):
+        return random.randint(1, 10)
+
+    def __str__(self):
+        return "{ Color: " + str(self._color) + ", " +\
+            "Value: " + str(self._value) + "}"
 
 
 class Deck:
-    def _get_card():
-        return Card()
+
+    def pick_card(self):
+        return Card(color=None)
+
+    def pick_starting_black_card(self):
+        return Card(color=Color.BLACK)
+
+
+class Dealer:
+
+    def __init__(self):
+        self._total = 0
+
+    def _policy(self):
+        if self._total >= 17:
+            return Action.STICK
+        else:
+            return Action.HIT
