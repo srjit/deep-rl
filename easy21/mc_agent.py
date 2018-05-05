@@ -27,12 +27,16 @@ class MCAgent(Agent):
 
     def predict(self, episode):
         '''
+        Calculating the predicted return for each game state in the episode
+        
         Value function approximation - this prediction has to improve over
         time
         '''
         for index, (state, action, reward) in enumerate(episode):
             
             # find the return - Gt: Notation like how Dr.Silver uses it
+
+            # Important Part - using rewards from next state to the end state 
             Gt = sum([(self._gamma**idx)*_reward for idx, (_, _, _reward) in
                   enumerate(episode[index:])])
 
@@ -44,6 +48,12 @@ class MCAgent(Agent):
             # value of dealer sum and agent sum
             self.V[state._dealer._total][state._player_sum] = self.Gs[state._dealer._total][state._player_sum] / sum(
                 self.N[state._dealer._total, state._player_sum, :])
+
+            import ipdb
+            ipdb.set_trace()
+            print("Predicted reward: ", str(self.V[state._dealer._total][state._player_sum]))
+            print("Actual reward:", str(reward))
+            
 
     def policy(self):
         if self.env._game_state._player_sum >= 17:
