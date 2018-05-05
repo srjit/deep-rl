@@ -21,37 +21,30 @@ class TDAgent(Agent):
         self.Gs = np.zeros([self.env.dealer_max_value + 1,
                             self.env.agent_max_value + 1])
 
-    def predict(self, episode):
+    def predict(self, current_state_details,
+                       next_state_details):
         '''
-        Calculating the predicted return for each game state in the episode
+        Recompute reward of current state
+
+        reducing the TD error
         
-        Value function approximation - this prediction has to improve over
-        time
         '''
-        for index, (state, action, reward) in enumerate(episode):
-            
-            # find the return - Gt: Notation like how Dr.Silver uses it
+        (current_game_state, current_action, current_reward) = current_state_details
+        (next_game_state, next_action, next_reward) = next_state_details
+        
+        Gt = self._gamma * next_reward
 
-            # Change in predicting the return : https://youtu.be/PnHCvfgC_ZA?list=PL7-jPKtc4r78-wCZcQn5IqyuWhBZ8fOxT&t=2156
-            # 
+        self.Gs[current_game_state._dealer._total][current_game_state._player_sum] += Gt
 
-            
-            Gt = sum([(self._gamma**idx)*_reward for idx, (_, _, _reward) in
-                  enumerate(episode[index:])])
+        prev_Vs = self.V[current_game_state._dealer._total][current_game_state._player_sum]
+        alpha = 1/(sum(self.N[current_game_state._dealer._total, current_game_state._player_sum, :]))
 
-            # for each dealer sum agent sum combination,
-            # how much reward am I getting?
-            self.Gs[state._dealer._total][state._player_sum] += Gt
+        update = alpha * ((current_reward + Gt) - prev_Vs)
+        
+        self.V[current_game_state._dealer._total][current_game_state._player_sum] = prev_Vs + update
+        
+        print("Predicted return: ", str(self.V[current_game_state._dealer._total][current_game_state._player_sum]))
 
-            # average reward for a particular action at a particular
-            # value of dealer sum and agent sum
-            self.V[state._dealer._total][state._player_sum] = self.Gs[state._dealer._total][state._player_sum] / sum(
-                self.N[state._dealer._total, state._player_sum, :])
-
-            import ipdb
-            ipdb.set_trace()
-            print("Predicted reward: ", str(self.V[state._dealer._total][state._player_sum]))
-            print("Actual reward:", str(reward))
             
 
     def policy(self):
@@ -71,6 +64,11 @@ class TDAgent(Agent):
             print("Beginning episode ", episode_id)
             episode = []
             env.reset_game()
+            
+            previous_game_state = None
+            previous_action = None
+            previous_reward = None
+            
             while not env._game_state._is_terminal:
                 current_game_state = copy.copy(self.env._game_state)
                 action = self.policy()
@@ -86,11 +84,18 @@ class TDAgent(Agent):
                 if current_game_state._dealer._total <= 21:
                     episode.append((current_game_state, action, reward))
 
-            print("Episode " + str(e) + " complete")
-            try:
-                self.predict(episode)
-            except Exception:
-                print("Dealer sum above 21, Skipping this episode for now")
+                if previous_game_state is not None:
+
+                    try:
+                        self.predict((previous_game_state, previous_action, previous_reward),
+                                     (current_game_state, action, reward))
+                    except:
+                        print("Dealer sum above 21, Skipping...")
+
+                previous_game_state = current_game_state
+                previous = action
+                previous_reward = reward
+                
 
         return self.V
 

@@ -34,7 +34,7 @@ class Environment:
         self.reset_game()
 
         self.agent_max_value = 21
-        self.dealer_max_value = 10
+        self.dealer_max_value = 21
         self.actions_count = 2
 
     def reset_game(self):
