@@ -84,7 +84,7 @@ class MCAgent(Agent):
             except Exception:
                 print("Dealer sum above 21, Skipping this episode for now")
 
-        return self.get_value_function()
+        return self.V
 
 
 env = Environment()
