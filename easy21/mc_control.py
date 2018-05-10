@@ -26,21 +26,21 @@ class MCAgentControl(Agent):
         # N(s) - number of times a state has been visited
         # N(s,a) - number of times a state has been selected
         # and an action has been chosen
-        self.Ns = np.zeros([self.env.dealer_max_value + 1,
-                            self.env.agent_max_value + 1])
-
-
-    def epsilon(self):
-        return self.No/((self.No + sum(self.N[state._dealer._total_sum, state._player_sum, action.value])) * 1.0))        
-
-    
-    def alpha(self,state,action):
-        return 1.0/(self.N[state._dealer._total_sum][state._player_sum][action.value])
-
-    def get_max_action(self, state):
-        return np.max(self.Q[state._dealer._total][state._player_sum])
+        self.Ns = self.get_clear_tensor()
         
 
+    def epsilon(self, state):
+        return self.No/((self.No + sum(self.Ns[state._dealer._total, state._player_sum, :])) * 1.0)
+
+    
+    def alpha(self, state, action):
+        return 1.0/(self.Ns[state._dealer._total_sum][state._player_sum][action.value])
+
+    def get_max_action(self, state):
+        if np.max(self.Q[state._dealer._total][state._player_sum]) == 0:
+            return Action.STICK
+        return Action.HIT
+        
     def policy(self, state):
         '''
         At each state what is the best policy
@@ -50,7 +50,7 @@ class MCAgentControl(Agent):
         else exploit
         '''
         r = np.random.rand()
-        if r < self.epsilon():
+        if r < self.epsilon(state):
             action = self.choose_random_action()
         else:
             action = self.choose_best_action(state)
@@ -58,13 +58,24 @@ class MCAgentControl(Agent):
         return action
 
     
-    def control(self):
+    def control(self, episode):
         '''
-        Improve the approximation of Q(s,a)
+        Improve the approximation of Q(s,a) towards Bellman optimal Action value function
+        Q*(s, a)
         '''
-        pass
+        i = 0
+        for index, (state, action, reward) in enumerate(episode):
+            Gt = sum([(self._gamma**idx)*_reward for idx, (_, _, _reward) in
+                  enumerate(episode[index:])])
+            self.Ns[self._dealer._total][self._player_sum] += 1
 
-    def train(self):
+            error = Gt - self.Q[self._dealer._total][self._player_sum][action.value]
+
+            self.Q[self._dealer._total][self._player_sum][action.value] += self.alpha(state, action) * error
+            i += 1
+            
+
+    def train(self, steps):
 
         for episode_id, e in enumerate(range(steps)):
             print("Beginning episode ", episode_id)
@@ -76,7 +87,7 @@ class MCAgentControl(Agent):
             while not env._game_state._is_terminal:
                 current_game_state = copy.copy(self.env._game_state)
                 
-                action = self.policy()
+                action = self.policy(current_game_state)
                 reward = self.env.step(action)
 
                 # the 'if' statement is a hack
@@ -95,8 +106,15 @@ class MCAgentControl(Agent):
             if reward == 1:
                 self.wins += 1
             
-            if episode_id % 10000 == 0 and self.iterations > 0:
-                print("Win Percentage:", (float(self.wins)/e)*100.0)
+            if episode_id % 1000 == 0:
+                import ipdb
+                ipdb.set_trace()
+                print("Win Percentage:", (float(self.wins)/(episode_id+1))*100.0)
             
         return self.V
         
+
+env = Environment()
+agent = MCAgentControl(env, gamma=0.1)
+value_function = agent.train(10000)
+    
