@@ -15,7 +15,7 @@ __version__ = "0.0.1"
 #     G_s(s) <- G_s(s) + Gt    ## Total value received until now
 #     V(s) <- S(s)/n(s)
 
-class MCAgent(Agent):
+class MCPolicyEvaluation(Agent):
 
     def __init__(self, environment, gamma, No=100):
         Agent.__init__(self, environment, gamma, No)
@@ -49,8 +49,6 @@ class MCAgent(Agent):
             self.V[state._dealer._total][state._player_sum] = self.Gs[state._dealer._total][state._player_sum] / sum(
                 self.N[state._dealer._total, state._player_sum, :])
 
-            import ipdb
-            ipdb.set_trace()
             print("Predicted reward: ", str(self.V[state._dealer._total][state._player_sum]))
             print("Actual reward:", str(reward))
             
@@ -98,5 +96,5 @@ class MCAgent(Agent):
 
 
 env = Environment()
-agent = MCAgent(env, gamma=0.1)
+agent = MCPolicyEvaluation(env, gamma=0.1)
 value_function = agent.train(10000)

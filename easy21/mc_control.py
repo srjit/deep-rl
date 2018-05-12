@@ -78,7 +78,7 @@ class MCAgentControl(Agent):
     def train(self, steps):
 
         for episode_id, e in enumerate(range(steps)):
-            print("Beginning episode ", episode_id)
+            # print("Beginning episode ", episode_id)
             episode = []
             env.reset_game()
 
@@ -101,14 +101,14 @@ class MCAgentControl(Agent):
                 if current_game_state._dealer._total <= 21:
                     episode.append((current_game_state, action, reward))
 
-            print("Episode " + str(e) + " complete")
+            # print("Episode " + str(e) + " complete")
 
             if reward == 1:
                 self.wins += 1
             
             if episode_id % 1000 == 0:
-                import ipdb
-                ipdb.set_trace()
+                # import ipdb
+                # ipdb.set_trace()
                 print("Win Percentage:", (float(self.wins)/(episode_id+1))*100.0)
             
         return self.V
@@ -116,5 +116,5 @@ class MCAgentControl(Agent):
 
 env = Environment()
 agent = MCAgentControl(env, gamma=0.1)
-value_function = agent.train(10000)
+value_function = agent.train(100000)
     

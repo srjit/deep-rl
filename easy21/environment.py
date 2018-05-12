@@ -80,7 +80,7 @@ class Environment:
             action = self._game_state._dealer._policy()
             if action == Action.HIT:
                 card = self._deck.pick_card()
-                print("Dealer picked: ", card)
+                # print("Dealer picked: ", card)
                 self._add_card_value(card)
             self._game_state._is_terminal = self.check_bust()
 
