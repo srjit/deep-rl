@@ -79,3 +79,8 @@ class MCControl:
 
             if e_idx % 1000 == 0:
                 print("% wins after " + str(e_idx) + " games: " + str(float(self.wins)/e_idx))
+
+
+## Let's run this mofo
+agent = MCControl(0.1)
+agent.train(10000)
