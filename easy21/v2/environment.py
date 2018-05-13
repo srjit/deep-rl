@@ -54,9 +54,10 @@ class Dealer:
         
 class State:
 
-    def __init__(self, _dealer_sum, _player_sum, _reward, _is_terminal):
+    def __init__(self, _dealer_sum, _player_sum, _action, _reward, _is_terminal):
         self.dealer_sum = _dealer_sum
         self.player_sum = _player_sum
+        self.action = _action
         self.reward = _reward
         self.is_terminal = _is_terminal
 
@@ -81,7 +82,7 @@ class BlackJackEnv:
         initial_dealer_sum = self.deck.draw_black_card().value
         initial_player_sum = self.deck.draw_black_card().value
         
-        self.current_state = State(initial_dealer_sum, initial_player_sum, 0, False)
+        self.current_state = State(initial_dealer_sum, initial_player_sum, Action.HIT, 0, False)
 
         _tmp = copy.copy(self.current_state)
 
@@ -133,7 +134,9 @@ class BlackJackEnv:
 
         reward = self.reward(dealer_sum, player_sum, is_terminal)
 
-        self.current_state = State(dealer_sum, player_sum, reward, is_terminal)
+        self.current_state = State(dealer_sum, player_sum, action, reward, is_terminal)
+
+
         self.game_states.append(self.current_state)
 
         if not is_terminal:
@@ -144,13 +147,14 @@ class BlackJackEnv:
         r = 0
         if player_action == Action.HIT:
             value = self.get_effective_card_value(self.deck.draw_random_card())
-            print("--->", value)
+            # print("--->", value)
             dealer_sum = self.current_state.dealer_sum
             player_sum = self.current_state.player_sum + value
             is_terminal = self.has_player_lost(player_sum)
             reward = self.reward(dealer_sum, player_sum, is_terminal)
             self.current_state = State(dealer_sum,
                                        player_sum,
+                                       player_action,
                                        reward,
                                        is_terminal)
             self.game_states.append(self.current_state)
