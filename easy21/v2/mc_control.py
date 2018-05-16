@@ -17,8 +17,8 @@ class MCControl:
         self.iterations = 0
 
     def set_parameters(self):
-        dealer_max_value = 31
-        player_max_value = 31
+        dealer_max_value = 11
+        player_max_value = 22
         actions_count = 2
         self.No = 100
         self.Q = np.zeros([dealer_max_value, player_max_value, actions_count])
@@ -57,6 +57,7 @@ class MCControl:
 
             _N = 1/self.N[dealer_sum][player_sum][action.value]
             self.Q[dealer_sum][player_sum][action.value] += (1/_N) * error
+            
 
 
     def train(self, iterations):
