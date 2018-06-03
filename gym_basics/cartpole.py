@@ -21,5 +21,6 @@ for e_index in range(20):
         observation, reward, done, info = env.step(action)
         if done:
             print("Episode finished after {} timesteps".format(t+1))
-            break        
+            break
+        
     
